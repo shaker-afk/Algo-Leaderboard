@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Two-Machine Scheduling — Leaderboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-dark: #0a0a0f;
+    --bg-card: #12121a;
+    --bg-card-hover: #1a1a25;
+    --gold: #FFD700;
+    --gold-dim: #B8960F;
+    --green: #4ADE80;
+    --green-dim: #166534;
+    --yellow: #FACC15;
+    --yellow-dim: #854D0E;
+    --red: #F87171;
+    --red-dim: #991B1B;
+    --text-primary: #f0f0f5;
+    --text-secondary: #8888a0;
+    --text-muted: #55556a;
+    --border: #1e1e2e;
+    --glow-gold: 0 0 30px rgba(255, 215, 0, 0.15);
+    --glow-green: 0 0 20px rgba(74, 222, 128, 0.1);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ---- Background Grid ---- */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: 
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ---- Ambient Glow ---- */
+  .ambient-glow {
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.07;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .glow-1 {
+    top: -200px;
+    left: -100px;
+    background: var(--gold);
+    animation: float1 15s ease-in-out infinite;
+  }
+
+  .glow-2 {
+    bottom: -200px;
+    right: -100px;
+    background: var(--green);
+    animation: float2 18s ease-in-out infinite;
+  }
+
+  @keyframes float1 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(80px, 60px); }
+  }
+
+  @keyframes float2 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-60px, -80px); }
+  }
+
+  /* ---- Container ---- */
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ---- Header ---- */
+  .header {
+    text-align: center;
+    margin-bottom: 50px;
+    animation: fadeInDown 0.8s ease-out;
+  }
+
+  .header-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    display: inline-block;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+
+  .header h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, var(--gold), var(--text-primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+
+  .header p {
+    color: var(--text-secondary);
+    font-size: 15px;
+    font-weight: 300;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* ---- Live Indicator ---- */
+  .live-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding: 12px 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    animation: fadeIn 0.6s ease-out 0.2s both;
+  }
+
+  .live-dot-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .live-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: blink 1.5s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .live-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--green);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .refresh-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .refresh-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    box-shadow: var(--glow-gold);
+  }
+
+  .refresh-btn.spinning {
+    animation: spin 0.8s linear;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* ---- Stats Bar ---- */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+    animation: fadeIn 0.6s ease-out 0.3s both;
+  }
+
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: 'Space Mono', monospace;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  /* ---- Table ---- */
+  .table-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    animation: fadeInUp 0.6s ease-out 0.4s both;
+  }
+
+  .table-header {
+    display: grid;
+    grid-template-columns: 60px 1fr 140px 60px;
+    padding: 14px 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .table-header span {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .table-header span:nth-child(3),
+  .table-header span:nth-child(4) {
+    text-align: right;
+  }
+
+  /* ---- Rows ---- */
+  .row {
+    display: grid;
+    grid-template-columns: 60px 1fr 140px 60px;
+    padding: 16px 20px;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .row::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .row:hover {
+    background: var(--bg-card-hover);
+  }
+
+  .row:hover::before {
+    opacity: 1;
+  }
+
+  .row:last-child {
+    border-bottom: none;
+  }
+
+  /* ---- Rank ---- */
+  .rank {
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text-muted);
+  }
+
+  /* ---- Podium Styles ---- */
+  .row.gold {
+    background: rgba(255, 215, 0, 0.03);
+  }
+  .row.gold::before { background: var(--gold); }
+  .row.gold .rank { color: var(--gold); }
+  .row.gold .team-name { color: var(--gold); }
+
+  .row.green {
+    background: rgba(74, 222, 128, 0.02);
+  }
+  .row.green::before { background: var(--green); }
+  .row.green .rank { color: var(--green); }
+
+  .row.yellow {
+    background: rgba(250, 204, 21, 0.02);
+  }
+  .row.yellow::before { background: var(--yellow); }
+  .row.yellow .rank { color: var(--yellow); }
+
+  .row.red {
+    background: rgba(248, 113, 113, 0.02);
+  }
+  .row.red::before { background: var(--red); }
+  .row.red .rank { color: var(--red); }
+
+  /* ---- Rank Badges ---- */
+  .rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+
+  .row.gold .rank-badge {
+    background: rgba(255, 215, 0, 0.15);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+  }
+
+  .row.green .rank-badge {
+    background: rgba(74, 222, 128, 0.1);
+    border: 1px solid rgba(74, 222, 128, 0.2);
+  }
+
+  .row.yellow .rank-badge {
+    background: rgba(250, 204, 21, 0.1);
+    border: 1px solid rgba(250, 204, 21, 0.2);
+  }
+
+  .row.red .rank-badge {
+    background: rgba(248, 113, 113, 0.1);
+    border: 1px solid rgba(248, 113, 113, 0.2);
+  }
+
+  /* ---- Team Name ---- */
+  .team-name {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text-primary);
+  }
+
+  /* ---- Score ---- */
+  .score {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    text-align: right;
+    color: var(--text-secondary);
+  }
+
+  .score-unit {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-left: 2px;
+  }
+
+  /* ---- Tier Badge ---- */
+  .tier {
+    text-align: right;
+    font-size: 18px;
+  }
+
+  /* ---- Top 3 Special ---- */
+  .row.rank-1 {
+    padding: 20px;
+  }
+
+  .row.rank-1 .team-name {
+    font-size: 18px;
+    font-weight: 800;
+  }
+
+  .row.rank-1 .score {
+    font-size: 16px;
+    color: var(--gold);
+  }
+
+  /* ---- Loading ---- */
+  .loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+  }
+
+  .loading-spinner {
+    width: 32px;
+    height: 32px;
+    border: 2px solid var(--border);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+
+  /* ---- Empty State ---- */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+  }
+
+  .empty-state p {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }
+
+  /* ---- Animations ---- */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .row {
+    animation: slideIn 0.4s ease-out both;
+  }
+
+  /* ---- Footer ---- */
+  .footer {
+    text-align: center;
+    margin-top: 32px;
+    padding: 16px;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-family: 'Space Mono', monospace;
+    animation: fadeIn 0.6s ease-out 0.6s both;
+  }
+
+  .footer a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    transition: all 0.3s;
+  }
+
+  .footer a:hover {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 600px) {
+    .header h1 { font-size: 24px; }
+    .stats-bar { grid-template-columns: 1fr; }
+    .table-header, .row { grid-template-columns: 50px 1fr 100px 40px; padding: 12px 14px; }
+    .team-name { font-size: 13px; }
+    .score { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="ambient-glow glow-1"></div>
+<div class="ambient-glow glow-2"></div>
+
+<div class="container">
+  <div class="header">
+    <div class="header-icon">&#9878;</div>
+    <h1>TWO-MACHINE SCHEDULING</h1>
+    <p>Algo 11313 &mdash; Leaderboard</p>
+  </div>
+
+  <div class="live-bar">
+    <div class="live-dot-wrap">
+      <div class="live-dot"></div>
+      <span class="live-text">Live</span>
+    </div>
+    <button class="refresh-btn" onclick="refresh()">&#8635; Refresh</button>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-value" id="stat-teams">-</div>
+      <div class="stat-label">Teams</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="stat-best">-</div>
+      <div class="stat-label">Best Score</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="stat-avg">-</div>
+      <div class="stat-label">Avg Score</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <div class="table-header">
+      <span>#</span>
+      <span>Team</span>
+      <span>Score</span>
+      <span>Tier</span>
+    </div>
+    <div id="leaderboard">
+      <div class="loading">
+        <div class="loading-spinner"></div>
+        Loading leaderboard...
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Auto-refreshes every 30 seconds &bull; Lower score = better
+  </div>
+</div>
+
+<script>
+  const SHEET_ID = '1UpI_SyekAoW74PuF1UDVX3zcFR0OUOUp-U17q5HZ5Xo';
+  const API_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+
+  function getTier(score) {
+    if (score < 30000) return { class: 'gold', icon: '&#128081;' };      // Crown
+    if (score < 50000) return { class: 'green', icon: '&#11088;' };       // Star
+    if (score < 55000) return { class: 'yellow', icon: '&#9889;' };       // Lightning
+    return { class: 'red', icon: '&#128308;' };                           // Red circle
+  }
+
+  function formatScore(score) {
+    return score.toLocaleString();
+  }
+
+  async function fetchLeaderboard() {
+    try {
+      const response = await fetch(API_URL);
+      const text = await response.text();
+
+      // Google returns JSONP-like format, extract the JSON
+      const json = JSON.parse(text.substring(47).slice(0, -2));
+
+      const rows = json.table.rows;
+      const data = [];
+
+      for (let i = 0; i < rows.length; i++) {
+        const cells = rows[i].c;
+        if (!cells[0] || !cells[1]) continue;
+
+        const name = cells[0].v;
+        const score = parseFloat(cells[1].v);
+
+        // Skip header row
+        if (name === 'Team Name' || isNaN(score)) continue;
+
+        data.push({ name, score });
+      }
+
+      // Sort ascending (lower is better)
+      data.sort((a, b) => a.score - b.score);
+
+      return data;
+    } catch (err) {
+      console.error('Failed to fetch leaderboard:', err);
+      return null;
+    }
+  }
+
+  function renderLeaderboard(data) {
+    const container = document.getElementById('leaderboard');
+    const statTeams = document.getElementById('stat-teams');
+    const statBest = document.getElementById('stat-best');
+    const statAvg = document.getElementById('stat-avg');
+
+    if (!data || data.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <p>&#128123;</p>
+          <span>No submissions yet. Be the first!</span>
+        </div>
+      `;
+      statTeams.textContent = '0';
+      statBest.textContent = '-';
+      statAvg.textContent = '-';
+      return;
+    }
+
+    // Update stats
+    statTeams.textContent = data.length;
+    statBest.textContent = formatScore(data[0].score) + 'ms';
+    const avg = Math.round(data.reduce((sum, d) => sum + d.score, 0) / data.length);
+    statAvg.textContent = formatScore(avg) + 'ms';
+
+    // Render rows
+    let html = '';
+    data.forEach((entry, i) => {
+      const rank = i + 1;
+      const tier = getTier(entry.score);
+      const rankClass = rank <= 3 ? ` rank-${rank}` : '';
+      const delay = Math.min(i * 0.05, 1);
+
+      html += `
+        <div class="row ${tier.class}${rankClass}" style="animation-delay: ${delay}s">
+          <div class="rank">
+            <span class="rank-badge">${rank}</span>
+          </div>
+          <div class="team-name">${escapeHtml(entry.name)}</div>
+          <div class="score">${formatScore(entry.score)}<span class="score-unit">ms</span></div>
+          <div class="tier">${tier.icon}</div>
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  async function refresh() {
+    const btn = document.querySelector('.refresh-btn');
+    btn.classList.add('spinning');
+
+    const data = await fetchLeaderboard();
+    renderLeaderboard(data);
+
+    setTimeout(() => btn.classList.remove('spinning'), 800);
+  }
+
+  // Initial load
+  refresh();
+
+  // Auto-refresh every 30 seconds
+  setInterval(refresh, 30000);
+</script>
+
+</body>
+</html>
