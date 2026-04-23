@@ -7,22 +7,22 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg-dark: #0a0a0f;
-    --bg-card: #12121a;
-    --bg-card-hover: #1a1a25;
-    --gold: #FFD700;
+    --bg-dark: #1a1a2e;
+    --bg-card: #222240;
+    --bg-card-hover: #2a2a4a;
+    --gold: #FF9500;
     --gold-dim: #B8960F;
     --green: #4ADE80;
     --green-dim: #166534;
-    --yellow: #FF6B2B;
+    --yellow: #FACC15;
     --yellow-dim: #854D0E;
     --red: #EF4444;
     --red-dim: #991B1B;
     --text-primary: #f0f0f5;
     --text-secondary: #8888a0;
     --text-muted: #55556a;
-    --border: #1e1e2e;
-    --glow-gold: 0 0 30px rgba(255, 215, 0, 0.15);
+    --border: #2e2e4a;
+    --glow-gold: 0 0 30px rgba(255, 149, 0, 0.15);
     --glow-green: 0 0 20px rgba(74, 222, 128, 0.1);
   }
 
@@ -40,7 +40,6 @@
     overflow-x: hidden;
   }
 
-  /* ---- Background Grid ---- */
   body::before {
     content: '';
     position: fixed;
@@ -53,7 +52,6 @@
     z-index: 0;
   }
 
-  /* ---- Ambient Glow ---- */
   .ambient-glow {
     position: fixed;
     width: 600px;
@@ -89,7 +87,6 @@
     50% { transform: translate(-60px, -80px); }
   }
 
-  /* ---- Container ---- */
   .container {
     max-width: 800px;
     margin: 0 auto;
@@ -98,7 +95,6 @@
     z-index: 1;
   }
 
-  /* ---- Header ---- */
   .header {
     text-align: center;
     margin-bottom: 50px;
@@ -137,7 +133,6 @@
     text-transform: uppercase;
   }
 
-  /* ---- Live Indicator ---- */
   .live-bar {
     display: flex;
     align-items: center;
@@ -206,10 +201,9 @@
     to { transform: rotate(360deg); }
   }
 
-  /* ---- Stats Bar ---- */
   .stats-bar {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
     margin-bottom: 24px;
     animation: fadeIn 0.6s ease-out 0.3s both;
@@ -238,7 +232,6 @@
     margin-top: 4px;
   }
 
-  /* ---- Table ---- */
   .table-wrap {
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -268,7 +261,6 @@
     text-align: right;
   }
 
-  /* ---- Rows ---- */
   .row {
     display: grid;
     grid-template-columns: 60px 1fr 140px 60px;
@@ -303,7 +295,6 @@
     border-bottom: none;
   }
 
-  /* ---- Rank ---- */
   .rank {
     font-family: 'Space Mono', monospace;
     font-weight: 700;
@@ -311,33 +302,31 @@
     color: var(--text-muted);
   }
 
-  /* ---- Podium Styles ---- */
   .row.gold {
-    background: rgba(255, 215, 0, 0.03);
+    background: rgba(255, 149, 0, 0.05);
   }
   .row.gold::before { background: var(--gold); }
   .row.gold .rank { color: var(--gold); }
   .row.gold .team-name { color: var(--gold); }
 
   .row.green {
-    background: rgba(74, 222, 128, 0.02);
+    background: rgba(74, 222, 128, 0.04);
   }
   .row.green::before { background: var(--green); }
   .row.green .rank { color: var(--green); }
 
   .row.yellow {
-    background: rgba(250, 204, 21, 0.02);
+    background: rgba(250, 204, 21, 0.04);
   }
   .row.yellow::before { background: var(--yellow); }
   .row.yellow .rank { color: var(--yellow); }
 
   .row.red {
-    background: rgba(248, 113, 113, 0.02);
+    background: rgba(239, 68, 68, 0.04);
   }
   .row.red::before { background: var(--red); }
   .row.red .rank { color: var(--red); }
 
-  /* ---- Rank Badges ---- */
   .rank-badge {
     display: inline-flex;
     align-items: center;
@@ -349,8 +338,8 @@
   }
 
   .row.gold .rank-badge {
-    background: rgba(255, 215, 0, 0.15);
-    border: 1px solid rgba(255, 215, 0, 0.3);
+    background: rgba(255, 149, 0, 0.15);
+    border: 1px solid rgba(255, 149, 0, 0.3);
   }
 
   .row.green .rank-badge {
@@ -364,18 +353,16 @@
   }
 
   .row.red .rank-badge {
-    background: rgba(248, 113, 113, 0.1);
-    border: 1px solid rgba(248, 113, 113, 0.2);
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
   }
 
-  /* ---- Team Name ---- */
   .team-name {
     font-weight: 600;
     font-size: 15px;
     color: var(--text-primary);
   }
 
-  /* ---- Score ---- */
   .score {
     font-family: 'Space Mono', monospace;
     font-size: 14px;
@@ -389,13 +376,11 @@
     margin-left: 2px;
   }
 
-  /* ---- Tier Badge ---- */
   .tier {
     text-align: right;
     font-size: 18px;
   }
 
-  /* ---- Top 3 Special ---- */
   .row.rank-1 {
     padding: 20px;
   }
@@ -410,7 +395,6 @@
     color: var(--gold);
   }
 
-  /* ---- Loading ---- */
   .loading {
     text-align: center;
     padding: 60px 20px;
@@ -429,7 +413,6 @@
     margin: 0 auto 16px;
   }
 
-  /* ---- Empty State ---- */
   .empty-state {
     text-align: center;
     padding: 60px 20px;
@@ -441,7 +424,6 @@
     margin-bottom: 12px;
   }
 
-  /* ---- Animations ---- */
   @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -466,7 +448,6 @@
     animation: slideIn 0.4s ease-out both;
   }
 
-  /* ---- Footer ---- */
   .footer {
     text-align: center;
     margin-top: 32px;
@@ -489,7 +470,6 @@
     border-bottom-color: var(--gold);
   }
 
-  /* ---- Responsive ---- */
   @media (max-width: 600px) {
     .header h1 { font-size: 24px; }
     .stats-bar { grid-template-columns: 1fr; }
@@ -528,10 +508,6 @@
       <div class="stat-value" id="stat-best">-</div>
       <div class="stat-label">Best Score</div>
     </div>
-    <div class="stat-card">
-      <div class="stat-value" id="stat-avg">-</div>
-      <div class="stat-label">Avg Score</div>
-    </div>
   </div>
 
   <div class="table-wrap">
@@ -563,7 +539,7 @@
     if (score >= 30000) return { class: 'yellow', icon: '&#9889;' };
     if (score >= 1000) return { class: 'green', icon: '&#11088;' };
     return { class: 'gold', icon: '&#128081;' };
-}
+  }
 
   function formatScore(score) {
     return score.toLocaleString();
@@ -573,29 +549,20 @@
     try {
       const response = await fetch(API_URL);
       const text = await response.text();
-
-      // Google returns JSONP-like format, extract the JSON
       const json = JSON.parse(text.substring(47).slice(0, -2));
-
       const rows = json.table.rows;
       const data = [];
 
       for (let i = 0; i < rows.length; i++) {
         const cells = rows[i].c;
         if (!cells[0] || !cells[1]) continue;
-
         const name = cells[0].v;
         const score = parseFloat(cells[1].v);
-
-        // Skip header row
         if (name === 'Team Name' || isNaN(score)) continue;
-
         data.push({ name, score });
       }
 
-      // Sort ascending (lower is better)
       data.sort((a, b) => a.score - b.score);
-
       return data;
     } catch (err) {
       console.error('Failed to fetch leaderboard:', err);
@@ -607,7 +574,6 @@
     const container = document.getElementById('leaderboard');
     const statTeams = document.getElementById('stat-teams');
     const statBest = document.getElementById('stat-best');
-    const statAvg = document.getElementById('stat-avg');
 
     if (!data || data.length === 0) {
       container.innerHTML = `
@@ -618,17 +584,12 @@
       `;
       statTeams.textContent = '0';
       statBest.textContent = '-';
-      statAvg.textContent = '-';
       return;
     }
 
-    // Update stats
     statTeams.textContent = data.length;
     statBest.textContent = formatScore(data[0].score) + 'ms';
-    const avg = Math.round(data.reduce((sum, d) => sum + d.score, 0) / data.length);
-    statAvg.textContent = formatScore(avg) + 'ms';
 
-    // Render rows
     let html = '';
     data.forEach((entry, i) => {
       const rank = i + 1;
@@ -660,17 +621,12 @@
   async function refresh() {
     const btn = document.querySelector('.refresh-btn');
     btn.classList.add('spinning');
-
     const data = await fetchLeaderboard();
     renderLeaderboard(data);
-
     setTimeout(() => btn.classList.remove('spinning'), 800);
   }
 
-  // Initial load
   refresh();
-
-  // Auto-refresh every 30 seconds
   setInterval(refresh, 30000);
 </script>
 
