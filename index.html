@@ -433,9 +433,9 @@
   const API_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
   function getTier(score) {
-    if (score >= 55000) return { class: 'red',    icon: '&#128308;' };
+    if (score >= 65000) return { class: 'red',    icon: '&#128308;' };
     if (score >= 30000) return { class: 'yellow', icon: '&#9889;' };
-    if (score >= 1000)  return { class: 'green',  icon: '&#11088;' };
+    if (score >= 1500)  return { class: 'green',  icon: '&#11088;' };
     return                     { class: 'gold',   icon: '&#128081;' };
   }
 
